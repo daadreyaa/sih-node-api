@@ -1,13 +1,17 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 
-const UserSchema = mongoose.Schema({
+const DeveloperSchema = mongoose.Schema({
+    userName: {
+        type: String,
+        required: true
+    },
     email: {
         type: String,
         required: true,
         unique: true
     },
-    password: {
+    accessToken: {
         type: String,
         required: true
     },
@@ -21,7 +25,7 @@ const UserSchema = mongoose.Schema({
 });
 
 // Method to set salt and hash the password for a user 
-UserSchema.methods.setPassword = function (password) {
+DeveloperSchema.methods.setPassword = function (password) {
 
     // Creating a unique salt for a particular user 
     this.salt = crypto.randomBytes(16).toString('hex');
@@ -33,10 +37,10 @@ UserSchema.methods.setPassword = function (password) {
 };
 
 // Method to check the entered password is correct or not 
-UserSchema.methods.validPassword = function (password) {
+DeveloperSchema.methods.validPassword = function (password) {
     var hash = crypto.pbkdf2Sync(password,
         this.salt, 1000, 64, `sha512`).toString(`hex`);
     return this.hash === hash;
 };
 
-module.exports = mongoose.model('developers', UserSchema);
+module.exports = mongoose.model('developers', DeveloperSchema);
